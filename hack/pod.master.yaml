@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bootstrap-config
+data:
+  # The bootstrap tool runs a systemd oneshot process when the container starts. The environment variables set on the
+  # container are not propagated to the bootstrap so we need to stuff them into a file that can be read via the the
+  # systemd "EnvironmentFile" directive.
+  env: |-
+    KUBECEPTION_BOOTSTRAP_DISABLE=true
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kubeception-dev
+spec:
+  containers:
+    - name: master
+      imagePullPolicy: Always
+      image: quay.io/plombardi89/kubeception:node
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: bootstrap-config
+          mountPath: /etc/kubeception/bootstrap
+          readOnly: true
+        - name: cgroup
+          mountPath: /sys/fs/cgroup
+          readOnly: true
+  volumes:
+    - name: bootstrap-config
+      configMap:
+        name: bootstrap-config
+    - name: cgroup
+      hostPath:
+        path: /sys/fs/cgroup

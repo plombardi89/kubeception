@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "kubernetes-master-{{.ClusterID}}"
+  labels:
+    cluster: "{{.ClusterID}}"
+    component: kubernetes-master
+spec:
+  replicas: 1
+  serviceName: "kubernetes-master-{{.ClusterID}}"
+  selector:
+    matchLabels:
+      cluster: "{{.ClusterID}}"
+      component: kubernetes-master
+  template:
+    metadata:
+      labels:
+        cluster: "{{.ClusterID}}"
+        component: kubernetes-master
+    spec:
+      containers:
+        - name: master
+          image: {{.NodeImageTag}}
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: kubeception-config
+              mountPath: /etc/kubeception/config
+              readOnly: true
+            - name: cgroup
+              mountPath: /sys/fs/cgroup
+              readOnly: true
+      volumes:
+        - name: kubeception-config
+          configMap:
+            name: "cluster-config-{{.ClusterID}}"
+        - name: cgroup
+          hostPath:
+            path: /sys/fs/cgroup

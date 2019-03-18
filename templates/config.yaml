@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "kubeception-{{.ClusterID}}"
+  labels:
+    cluster: "{{.ClusterID}}"
+data:
+  cluster-cni: calico
+  cluster-id: "{{.ClusterID}}"
+  kubeadm-token: "{{.KubeadmToken}}"
+  kubeadm-masterconfig: |-
+    ---
+    apiVersion: kubeadm.k8s.io/v1alpha2
+    kind: MasterConfiguration
+    api:
+      advertiseAddress: "${KUBE_API_ADDRESS}"
+    apiServerCertSANs:
+      - "${KUBE_CLUSTER_DNS_NAME}"
+      - "${KUBE_POD_IP}"
+      - "${KUBE_NODE_HOST_IP}"
+    clusterName: "{{ cluster.id }}"
+    networking:
+      podSubnet: "${POD_NETWORK_CIDR}"
+      serviceSubnet: "${SERVICE_NETWORK_CIDR}"
+    tokenTTL: "0"
+    token: "{{ kubeadm.token }}"
+    kubernetesVersion: "{{ kubernetes.version }}"
+    apiServerCertSANs:
+      - "${KUBE_CLUSTER_DNS_NAME}"
+      - "${KUBE_POD_IP}"
+      - "${KUBE_NODE_HOST_IP}"
+  node-is-master: ""
+  node-startup-mode: "{{ kubeception.node_startup_mode | lower }}"

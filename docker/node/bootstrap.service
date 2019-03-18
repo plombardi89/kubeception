@@ -1,0 +1,11 @@
+[Unit]
+Description=Kubeception Node Bootstrap
+After=multi-user.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/kubeception/bootstrap/env
+ExecStart=/usr/local/bin/bootstrap
+
+[Install]
+WantedBy=multi-user.target
