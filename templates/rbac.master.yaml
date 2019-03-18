@@ -1,0 +1,32 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kubeception
+  namespace: "{{ .Namespace }}"
+rules:
+  - apiGroups: [""]
+    resources: ["secrets", "configmaps"]
+    verbs: ["get", "create", "patch"]
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubeception
+  namespace: "{{ .Namespace }}"
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kubeception
+  namespace: "{{ .Namespace }}"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kubeception
+subjects:
+  - kind: ServiceAccount
+    name: kubeception
+    namespace: "{{ .Namespace }}"

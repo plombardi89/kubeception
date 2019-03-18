@@ -19,6 +19,7 @@ spec:
         cluster: "{{.ClusterID}}"
         component: kubernetes-master
     spec:
+      serviceAccountName: kubeception
       containers:
         - name: master
           image: {{.NodeImageTag}}

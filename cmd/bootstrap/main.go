@@ -27,5 +27,15 @@ func main() {
 
 	log.Println("kubernetes bootstrap started")
 
+	// check if we are bootstrapping a master or worker
+
+	// kubeadm init
+
+	// install cluster networking
+
+	// perform smoke tests and sanity
+
+	// publish the kubeconfig into a secret
+
 	log.Println("kubernetes bootstrap finished")
 }
